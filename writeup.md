@@ -15,8 +15,8 @@ The goals / steps of this project are the following:
 [image1]: ./examples/placeholder.png "Model Visualization"
 [image2]: ./center.jpg "Center Aligned"
 [image3]: ./recover_left_center.jpg "Recovery Image"
-[image4]: ./recover_left_center1.jpg "Recovery Image"
-[image5]: ./recover_left_center2.jpg "Recovery Image"
+[image4]: ./recover_left_center2.jpg "Recovery Image"
+[image5]: ./recover_left_center3.jpg "Recovery Image"
 [image6]: ./original.jpg "Normal Image"
 [image7]: ./flipped.jpg "Flipped Image"
 [image8]: ./drive.jpg "Running Model"
@@ -83,7 +83,7 @@ For details about how I created the training data, see the next section.
 ####1. Solution Design Approach
 
 The overall strategy for deriving a model architecture is based on NVIDIA's "End to End Learning for Self-Driving Cars".
-# Source:  https://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf
+Source:  https://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf
 
 My first step was to use a convolution neural network model similar to the LeNet but it didnt work quiet well and then from the video lectures got the idea of using NVIDIAs architecture. This approach works good because it has so many convolution layers with different depths, hence capturing all the different features like
 - track
@@ -128,8 +128,6 @@ Input
 
 Adam optimizer is used so learning rate issue is addressed by the model itself.
 
-
-![alt text][image1]
 
 ####3. Creation of the Training Set & Training Process
 
