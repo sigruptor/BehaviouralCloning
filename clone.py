@@ -17,9 +17,9 @@ def generator(samples, batch_size=32):
     num_samples = len(samples);
     while 1:
         sklearn.utils.shuffle(samples);
-        for offset in range(0, num_samples, int(batch_size/2)):
+        for offset in range(0, num_samples, int(batch_size/4)):
             #print("Offset: ",offset);
-            batch_samples = samples[offset:offset+int(batch_size/2)];
+            batch_samples = samples[offset:offset+int(batch_size/4)];
             images=[]
             measurements=[]
             for line in batch_samples:
@@ -35,7 +35,17 @@ def generator(samples, batch_size=32):
                 measurement_flipped = -measurement;
                 images.append(flipped_image);
                 measurements.append(measurement_flipped);
-
+                
+                left_imageName = '../Training/IMG/'+line[1].split('/')[-1];
+                right_imageName = '../Training/IMG/'+line[2].split('/')[-1];
+                left_image=cv2.imread(left_imageName);
+                right_image = cv2.imread(right_imageName);
+                images.append(left_image);
+                images.append(right_image);
+                skew = .2;
+                measurements.append(measurement+skew);
+                measurements.append(measurement-skew);
+                
             X_train=np.array(images);
             y_train=np.array(measurements);
             #print("X_train size: ",len(X_train));
@@ -47,7 +57,7 @@ validation_generator = generator(validation_samples, batch_size=32)
 
 from keras.models import Model
 from keras.models import Sequential;
-from keras.layers import Flatten, Dense, Lambda, Cropping2D;
+from keras.layers import Flatten, Dense, Lambda, Cropping2D, Dropout;
 from keras.layers.convolutional import Convolution2D;
 from keras.layers.pooling import MaxPooling2D;
 
@@ -59,12 +69,15 @@ model.add(Convolution2D(36,5,5,subsample=(2,2),activation="relu"));
 model.add(Convolution2D(48,5,5,subsample=(2,2),activation="relu"));
 #model.add(MaxPooling2D());
 model.add(Convolution2D(64,3,3,activation="relu"));
+model.add(Dropout(.3));
 #model.add(MaxPooling2D());
 model.add(Convolution2D(64,3,3,activation="relu"));
+model.add(Dropout(0.2))
 #model.add(MaxPooling2D());
 #model.add(MaxPooling2D());
 model.add(Flatten());
 model.add(Dense(100));
+model.add(Dropout(.3));
 model.add(Dense(50));
 model.add(Dense(10));
 model.add(Dense(1));
@@ -72,9 +85,9 @@ model.add(Dense(1));
 model.compile(loss='mse', optimizer='adam');
 #model.fit(X_train, y_train, validation_split=.2, shuffle=True, nb_epoch=4);
 import matplotlib.pyplot as plt;
-history_object = model.fit_generator(train_generator, samples_per_epoch =2*len(train_samples),
-        validation_data = validation_generator,nb_val_samples = 2*len(validation_samples), 
-                nb_epoch=4, verbose=1);
+history_object = model.fit_generator(train_generator, samples_per_epoch =4*len(train_samples),
+        validation_data = validation_generator,nb_val_samples = 4*len(validation_samples), 
+                nb_epoch=7, verbose=1);
 model.save('model.h5');
 ### print the keys contained in the history object
 print(history_object.history.keys())
